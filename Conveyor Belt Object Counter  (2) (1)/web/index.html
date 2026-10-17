@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101522">
+  <title>Conveyor Counter · Nikki Streams</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <a class="brand" href="/" aria-label="Conveyor Counter home">
+        <span class="brand-mark"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M5 10h22M5 22h22M9 10v12m7-12v12m7-12v12"/><circle cx="9" cy="16" r="2.3"/><circle cx="21" cy="16" r="2.3"/></svg></span>
+        <span><strong>conveyor<span class="brand-dot">.</span></strong><small>OBJECT COUNTER</small></span>
+      </a>
+      <div class="top-meta"><span class="live-indicator" id="top-indicator"></span><span id="top-status">OFFLINE</span><span class="top-divider"></span><span class="mono">NIKKI STREAMS</span></div>
+    </header>
+
+    <main>
+      <section class="intro">
+        <div><p class="eyebrow"><span class="eyebrow-line"></span> PROXIMITY · INDUSTRIAL AUTOMATION</p><h1>Every pass,<br><span>counted.</span></h1><p class="intro-copy">A near-field counter powered by your phone’s proximity sensor. No camera or image recognition.</p></div>
+        <div class="sensor-chip"><span class="sensor-glyph">⌁</span><span><strong>PROXIMITY SENSOR</strong><small>LIVE SENSOR INPUT</small></span><span class="chip-led" id="sensor-led"></span></div>
+      </section>
+
+      <section class="dashboard">
+        <article class="counter-card panel">
+          <div class="card-head"><div><p class="section-kicker">TOTAL TRIGGERS</p><p class="counter-label">Proximity triggers</p></div><span class="count-tag"><i></i> LIVE COUNT</span></div>
+          <div class="count-display"><span id="count">0</span><span class="count-unit">pcs</span></div>
+          <div class="counter-foot"><div class="belt-track" aria-hidden="true"><div class="belt-dashes"></div><span class="belt-object"></span></div><span id="last-detected">Waiting for first object</span></div>
+        </article>
+
+        <article class="status-card panel">
+          <div class="card-head"><div><p class="section-kicker">SENSOR STATUS</p><p class="card-title">Detection zone</p></div><span class="status-pill" id="status-pill"><i></i><span id="sensor-status">Standby</span></span></div>
+          <div class="zone-visual" id="zone-visual"><div class="zone-ring ring-one"></div><div class="zone-ring ring-two"></div><div class="zone-center"><span class="zone-icon">⌖</span><span id="zone-caption">CLEAR</span></div><div class="zone-object" id="zone-object"><span></span></div><div class="scan-line"></div></div>
+          <div class="reading-row"><span>PROXIMITY READING</span><strong id="reading">— <small>cm</small></strong></div>
+        </article>
+      </section>
+
+      <section class="lower-grid">
+        <article class="settings-card panel">
+          <div class="card-head"><div><p class="section-kicker">CONNECTION</p><p class="card-title">Phone sensor link</p></div><span class="connection-state" id="connection-label"><i></i><span>Not connected</span></span></div>
+          <form id="connection-form">
+            <label for="phone-address">PHONE SOCKET ADDRESS</label>
+            <div class="input-wrap"><span class="input-prefix">↗</span><input id="phone-address" placeholder="phone-ip:3000" autocomplete="url" spellcheck="false"></div>
+            <label for="session-id">STREAMS SESSION ID <span class="private-label">PRIVATE</span></label>
+            <div class="input-wrap"><span class="input-prefix">⌑</span><input id="session-id" type="password" placeholder="Paste session ID from Streams" autocomplete="off" required></div>
+            <p class="field-hint">Keep these settings here and choose Update connection whenever the socket address or session ID changes.</p>
+            <div class="form-actions"><button type="submit" class="button button-primary" id="connect-button"><span class="button-icon">↗</span> Connect phone</button><button type="button" class="button button-quiet hidden" id="disconnect-button">Disconnect</button></div>
+          </form>
+          <div class="connection-error hidden" id="connection-error" role="alert"></div>
+        </article>
+
+        <article class="tuning-card panel">
+          <div class="card-head"><div><p class="section-kicker">DETECTION LOGIC</p><p class="card-title">Tune the trigger</p></div><span class="tune-icon">≋</span></div>
+          <div class="setting-row"><div><label for="threshold">NEAR THRESHOLD</label><p>Trigger when sensor distance falls below this</p></div><strong><span id="threshold-value">4.9</span><small> cm</small></strong></div>
+          <input type="range" id="threshold" min="0.1" max="5" value="4.9" step="0.1" aria-label="Near distance threshold">
+          <div class="range-labels"><span>0.1 cm · closer</span><span>5.0 cm · farther</span></div>
+          <div class="setting-divider"></div>
+          <div class="setting-row cooldown-row"><div><label for="cooldown">OBJECT SPACING</label><p>Ignore repeat triggers in this time</p></div><strong><span id="cooldown-value">800</span><small> ms</small></strong></div>
+          <input type="range" id="cooldown" min="200" max="3000" value="800" step="100" aria-label="Object spacing cooldown">
+          <div class="range-labels"><span>200 ms · faster</span><span>3 sec · slower</span></div>
+          <p class="logic-note"><span>↳</span> One count per clear → near transition · phone reports distance in cm</p>
+          <p class="logic-note sensor-limit-note"><span>!</span> Phone proximity sensors usually work only within a few centimeters and cannot tell a hand from an item. Secure the phone in a mount with its top sensor aimed at the path; keep your hand away. This sensor cannot count items farther away.</p>
+        </article>
+      </section>
+
+      <section class="activity panel">
+        <div class="card-head"><div><p class="section-kicker">SENSOR FEED</p><p class="card-title">Recent activity</p></div><button class="reset-button" type="button" id="reset-button"><span>↺</span> Reset count</button></div>
+        <div class="activity-list" id="activity-list"><div class="empty-state"><span class="empty-icon">◌</span><span>Waiting for sensor data</span><small>Connect your phone to see live readings</small></div></div>
+      </section>
+    </main>
+    <footer><span>BUILT FOR THE MOVING LINE</span><span>LOCAL SENSOR DATA <i class="footer-dot"></i> NO CAMERA USED</span></footer>
+    <div class="toast" id="toast" role="status"></div>
+  </div>
+  <script src="/app.js"></script>
+</body>
+</html>
